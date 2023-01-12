@@ -1,8 +1,9 @@
-import styled from "styled-components";
-import { useEffect, useState } from "react";
-import { RegExp } from "../util/RegExp";
-import { KeyLIEvent } from "./type/type";
+import styled from 'styled-components';
+import { useEffect, useState } from 'react';
+import { RegExp } from '../util/RegExp';
+import { KeyLIEvent } from './type/type';
 import RecoWord from './RecoWord';
+import fetchSick from '../lib/fetchSick';
 
 interface childProps {
   isFocus: boolean;
@@ -24,31 +25,6 @@ export const RecommendSearch = ({
   keyInUse,
 }: childProps) => {
   const [recommendWord, setRecommendWord] = useState<Array<any>>([]);
-  const [countAxios, setCountAxios] = useState<number>(0);
-
-  // 과제 요구사항 콘솔
-  console.info("axios#############", countAxios);
-
-  // valid && fetch && caching
-  const fetchSick = async (param: string) => {
-    const BASE_URL = process.env.REACT_APP_BASE_SEARCH_URL;
-    const cacheStorage = await caches.open("search");
-    const responsedCache = await cacheStorage.match(`${BASE_URL}${param}`);
-    try {
-      if (responsedCache) {
-        responsedCache.json().then((res) => {
-          setRecommendWord(res);
-        });
-      } else {
-        const response2 = await fetch(`${BASE_URL}${param}`);
-        await cacheStorage.put(`${BASE_URL}${param}`, response2);
-        fetchSick(param);
-        setCountAxios((prev) => prev + 1);
-      }
-    } catch (error) {
-      alert(error);
-    }
-  };
 
   useEffect(() => {
     if (
@@ -62,7 +38,7 @@ export const RecommendSearch = ({
       ) {
         return;
       } else {
-        fetchSick(searchWord);
+        fetchSick(searchWord, setRecommendWord);
       }
     }
     if (searchWord?.length === 0) setRecommendWord([]);
@@ -71,30 +47,30 @@ export const RecommendSearch = ({
   // delete recent list
   const deleteSearchedWord = (value: string) => {
     let newLocalData = localStorageData?.filter((item: any) => item !== value);
-    localStorage.setItem("searched", `${newLocalData}`);
+    localStorage.setItem('searched', `${newLocalData}`);
     setlocalStorageData(newLocalData);
   };
 
   // tabIndex logic
-  const [focusItem, setFocusItem] = useState<string>("");
+  const [focusItem, setFocusItem] = useState<string>('');
   console.log(focusItem);
 
   const focusListSearch = (e: KeyboardEvent, focusItem: string) => {
-    if (e.code === "Enter") {
+    if (e.code === 'Enter') {
       setSearchWord(focusItem);
-      let searchListId = document.getElementById("#searchList");
+      let searchListId = document.getElementById('#searchList');
       searchListId?.blur();
-      let searchInputId = document.getElementById("searchInput");
+      let searchInputId = document.getElementById('searchInput');
       searchInputId?.focus();
     }
   };
 
   useEffect(() => {
-    document.addEventListener("keydown", (e: KeyboardEvent) =>
+    document.addEventListener('keydown', (e: KeyboardEvent) =>
       focusListSearch(e, focusItem)
     );
     return () => {
-      document.removeEventListener("keydown", (e: KeyboardEvent) =>
+      document.removeEventListener('keydown', (e: KeyboardEvent) =>
         focusListSearch(e, focusItem)
       );
     };
@@ -107,13 +83,13 @@ export const RecommendSearch = ({
     listLength: number
   ) => {
     document.getElementById(`searchList${index}`)?.blur();
-    if (e.code === "ArrowDown") {
+    if (e.code === 'ArrowDown') {
       if (index === listLength - 1) {
         document.getElementById(`searchList${0}`)?.focus();
       } else {
         document.getElementById(`searchList${index + 1}`)?.focus();
       }
-    } else if (e.code === "ArrowUp") {
+    } else if (e.code === 'ArrowUp') {
       if (index === 0) {
         document.getElementById(`searchList${listLength - 1}`)?.focus();
       } else {
@@ -139,7 +115,7 @@ export const RecommendSearch = ({
                         tabIndex={0}
                         onClick={() => {
                           setSearchWord(item);
-                          focusHandler("blur");
+                          focusHandler('blur');
                         }}
                         onKeyDown={(e) =>
                           focusContralArrow(e, index, localStorageData?.length)
@@ -148,8 +124,8 @@ export const RecommendSearch = ({
                       >
                         <ListItemWrap>
                           <img
-                            src={require("../images/searchGray.png")}
-                            alt="돋보기 이미지"
+                            src={require('../images/searchGray.png')}
+                            alt='돋보기 이미지'
                           />
                           <span>{item}</span>
                         </ListItemWrap>
@@ -158,8 +134,8 @@ export const RecommendSearch = ({
                             e.stopPropagation();
                             deleteSearchedWord(item);
                           }}
-                          src={require("../images/cancel.png")}
-                          alt="최근 검색어 삭제"
+                          src={require('../images/cancel.png')}
+                          alt='최근 검색어 삭제'
                         />
                       </li>
                     );
@@ -182,7 +158,7 @@ export const RecommendSearch = ({
                         tabIndex={0}
                         onClick={() => {
                           setSearchWord(item.sickNm);
-                          focusHandler("blur");
+                          focusHandler('blur');
                         }}
                         onKeyDown={(e) =>
                           focusContralArrow(e, index, recommendWord?.length)
