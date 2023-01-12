@@ -10,7 +10,7 @@ export default function useDebounce() {
       if (e.code.indexOf("Key") === 0) {
         setTimeout(() => {
           setKeyInUse(false);
-        }, 500);
+        }, 400);
       }
     } else if (type === "down") {
       setKeyInUse(true);
