@@ -1,7 +1,8 @@
 import styled from "styled-components";
 import { useState } from "react";
 import { RecommendSearch } from "./components/RecommendSearch";
-import { FormEvent, KeyEvent } from "./components/type/type";
+
+import type { FormEvent, KeyEvent } from "./types";
 
 function App() {
   const [isFocus, setIsFocus] = useState<boolean>(false);
@@ -17,7 +18,7 @@ function App() {
 
   let storageInit = localStorage.getItem("searched")?.split(",");
 
-  const [localStorageData, setlocalStorageData] = useState<any>(storageInit);
+  const [localStorageData, setlocalStorageData] = useState(storageInit);
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (searchWord !== "") {
@@ -51,7 +52,7 @@ function App() {
       setKeyInUse(true);
     }
     // tabIndex ArrowKey contral start
-    if (e.key === "ArrowDown") {
+    if (e.key === "ArrowDown" && !e.nativeEvent.isComposing) {
       document.getElementById("searchList0")?.focus();
     }
   };
