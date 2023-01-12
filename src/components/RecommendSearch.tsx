@@ -190,9 +190,11 @@ export const RecommendSearch = ({
                             src={require("../images/searchGray.png")}
                             alt="돋보기 이미지"
                           />
-                          {item.sickNm?.split(searchWord)[0]}
-                          <ItemBold>{searchWord}</ItemBold>
-                          {item.sickNm?.split(searchWord)[1]}
+                          <p style={{ color: "black", fontWeight: "normal" }}>
+                            {item.sickNm?.split(searchWord)[0]}
+                            <b>{searchWord}</b>
+                            {item.sickNm?.split(searchWord)[1]}
+                          </p>
                         </ListItemWrap>
                       </li>
                     );
