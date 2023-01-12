@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { FormEvent } from "../components/type/type";
+import { useState } from "react";
+import type { FormEvent } from "../types";
 
 export default function useSearch() {
   const [isFocus, setIsFocus] = useState<boolean>(false);
@@ -15,7 +15,7 @@ export default function useSearch() {
 
   let storageInit = localStorage.getItem("searched")?.split(",");
 
-  const [localStorageData, setlocalStorageData] = useState<any>(storageInit);
+  const [localStorageData, setlocalStorageData] = useState(storageInit);
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (searchWord !== "") {
@@ -35,7 +35,15 @@ export default function useSearch() {
       setSearchWord("");
     }
   };
-  
-  return {isFocus, searchWord, localStorageData, setlocalStorageData, setSearchWord, focusHandler, focusOn, onSubmit}
-}
 
+  return {
+    isFocus,
+    searchWord,
+    localStorageData,
+    setlocalStorageData,
+    setSearchWord,
+    focusHandler,
+    focusOn,
+    onSubmit,
+  };
+}

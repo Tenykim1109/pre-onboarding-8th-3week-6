@@ -1,11 +1,20 @@
 import styled from "styled-components";
 import { RecommendSearch } from "./components/RecommendSearch";
-import useDebounce from './hooks/useDebounce';
-import useSearch from './hooks/useSearch';
+import useDebounce from "./hooks/useDebounce";
+import useSearch from "./hooks/useSearch";
 
 function App() {
   const { keyInUse, keyCheck } = useDebounce();
-  const {isFocus, searchWord, localStorageData, setlocalStorageData, setSearchWord, focusHandler, focusOn, onSubmit} = useSearch();
+  const {
+    isFocus,
+    searchWord,
+    localStorageData,
+    setlocalStorageData,
+    setSearchWord,
+    focusHandler,
+    focusOn,
+    onSubmit,
+  } = useSearch();
 
   return (
     <SearchBox onClick={() => focusHandler("blur")}>

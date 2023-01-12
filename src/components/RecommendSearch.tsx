@@ -1,17 +1,20 @@
-import styled from 'styled-components';
-import { useEffect, useState } from 'react';
-import { RegExp } from '../util/RegExp';
-import { KeyLIEvent } from './type/type';
-import RecoWord from './RecoWord';
-import fetchSick from '../lib/fetchSick';
+import styled from "styled-components";
+import { useEffect, useState } from "react";
+import { RegExp } from "../util/RegExp";
+import fetchSick from "../lib/fetchSick";
+import RecoWord from "./RecoWord";
+
+import type { KeyLIEvent, SickInfo } from "../types";
 
 interface childProps {
   isFocus: boolean;
   searchWord: string;
   setSearchWord: React.Dispatch<React.SetStateAction<string>>;
   focusHandler: (type: string) => void;
-  localStorageData: any;
-  setlocalStorageData: React.Dispatch<any>;
+  localStorageData: string[] | undefined;
+  setlocalStorageData: React.Dispatch<
+    React.SetStateAction<string[] | undefined>
+  >;
   keyInUse: boolean;
 }
 
@@ -24,7 +27,7 @@ export const RecommendSearch = ({
   setlocalStorageData,
   keyInUse,
 }: childProps) => {
-  const [recommendWord, setRecommendWord] = useState<Array<any>>([]);
+  const [recommendWord, setRecommendWord] = useState<Array<SickInfo>>([]);
 
   useEffect(() => {
     if (
@@ -46,8 +49,8 @@ export const RecommendSearch = ({
 
   // delete recent list
   const deleteSearchedWord = (value: string) => {
-    let newLocalData = localStorageData?.filter((item: any) => item !== value);
-    localStorage.setItem('searched', `${newLocalData}`);
+    let newLocalData = localStorageData?.filter((item) => item !== value);
+    localStorage.setItem("searched", `${newLocalData}`);
     setlocalStorageData(newLocalData);
   };
 
@@ -106,8 +109,8 @@ export const RecommendSearch = ({
             <CardBox>
               <SearchCate>최근 검색어</SearchCate>
               <RecommendList>
-                {localStorageData && localStorageData !== undefined ? (
-                  localStorageData?.map((item: string, index: number) => {
+                {localStorageData?.length ? (
+                  localStorageData.map((item: string, index: number) => {
                     return (
                       <li
                         key={index}
@@ -118,7 +121,7 @@ export const RecommendSearch = ({
                           focusHandler('blur');
                         }}
                         onKeyDown={(e) =>
-                          focusContralArrow(e, index, localStorageData?.length)
+                          focusContralArrow(e, index, localStorageData.length)
                         }
                         onFocus={() => setFocusItem(item)}
                       >
@@ -149,11 +152,11 @@ export const RecommendSearch = ({
             <CardBox>
               <SearchCate>추천 검색어</SearchCate>
               <RecommendList>
-                {recommendWord?.length !== 0 ? (
-                  recommendWord?.map((item, index) => {
+                {recommendWord?.length ? (
+                  recommendWord.map((item, index) => {
                     return (
                       <li
-                        key={index}
+                        key={item.sickCd}
                         id={`searchList${index}`}
                         tabIndex={0}
                         onClick={() => {

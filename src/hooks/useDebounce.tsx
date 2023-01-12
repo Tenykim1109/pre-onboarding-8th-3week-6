@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import { KeyEvent } from "../components/type/type";
+import { useState } from "react";
+import type { KeyEvent } from "../types";
 
 export default function useDebounce() {
   // search requset optimizaition
   const [keyInUse, setKeyInUse] = useState(false);
-  
+
   const keyCheck = (e: KeyEvent, type: string) => {
     if (type === "up") {
       if (e.code.indexOf("Key") === 0) {
@@ -16,11 +16,10 @@ export default function useDebounce() {
       setKeyInUse(true);
     }
     // tabIndex ArrowKey contral start
-    if (e.key === "ArrowDown") {
+    if (e.key === "ArrowDown" && !e.nativeEvent.isComposing) {
       document.getElementById("searchList0")?.focus();
     }
   };
-  
-  return {keyInUse, keyCheck}
-}
 
+  return { keyInUse, keyCheck };
+}
