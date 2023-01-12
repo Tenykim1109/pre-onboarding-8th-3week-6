@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { useEffect, useState } from "react";
 import { RegExp } from "../util/RegExp";
+import RecoWord from "./RecoWord";
 
 import type { KeyLIEvent, SickInfo } from "../types";
 
@@ -56,10 +57,16 @@ export const RecommendSearch = ({
     if (
       searchWord?.length > 0 &&
       !RegExp.blankPattern(searchWord) && // not only blank
-      !RegExp.pattern(searchWord) && // not each String
       keyInUse === false
     ) {
-      fetchSick(searchWord);
+      if (
+        searchWord?.length <= 1 &&
+        RegExp.pattern(searchWord) // not each String
+      ) {
+        return;
+      } else {
+        fetchSick(searchWord);
+      }
     }
     if (searchWord?.length === 0) setRecommendWord([]);
   }, [searchWord, keyInUse]);
@@ -186,15 +193,7 @@ export const RecommendSearch = ({
                         onFocus={() => setFocusItem(item.sickNm)}
                       >
                         <ListItemWrap>
-                          <img
-                            src={require("../images/searchGray.png")}
-                            alt="돋보기 이미지"
-                          />
-                          <p style={{ color: "black", fontWeight: "normal" }}>
-                            {item.sickNm?.split(searchWord)[0]}
-                            <b>{searchWord}</b>
-                            {item.sickNm?.split(searchWord)[1]}
-                          </p>
+                          <RecoWord item={item} searchWord={searchWord} />
                         </ListItemWrap>
                       </li>
                     );
@@ -215,6 +214,8 @@ const Container = styled.div`
   position: absolute;
   top: 350px;
   width: 490px;
+  max-height: 500px;
+  overflow-y: auto;
   background-color: white;
   box-shadow: 1px 1px 4px 1px lightgray;
   border-radius: 20px;
@@ -259,10 +260,6 @@ const RecommendList = styled.ul`
 const ListItemWrap = styled.div`
   display: flex;
   align-items: center;
-`;
-
-const ItemBold = styled.span`
-  font-weight: bold;
 `;
 
 const CancelBtn = styled.img`

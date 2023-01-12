@@ -1,61 +1,20 @@
 import styled from "styled-components";
-import { useState } from "react";
 import { RecommendSearch } from "./components/RecommendSearch";
-
-import type { FormEvent, KeyEvent } from "./types";
+import useDebounce from "./hooks/useDebounce";
+import useSearch from "./hooks/useSearch";
 
 function App() {
-  const [isFocus, setIsFocus] = useState<boolean>(false);
-  const [searchWord, setSearchWord] = useState<string>("");
-
-  const focusHandler = (type: string) => {
-    type === "focus" ? setIsFocus(true) : setIsFocus(false);
-  };
-
-  const focusOn = () => {
-    document.getElementById("searchInput")?.focus();
-  };
-
-  let storageInit = localStorage.getItem("searched")?.split(",");
-
-  const [localStorageData, setlocalStorageData] = useState(storageInit);
-  const onSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    if (searchWord !== "") {
-      if (!localStorage.getItem("searched")) {
-        localStorage.setItem("searched", searchWord);
-        setlocalStorageData([searchWord]);
-      } else {
-        let newStorage = `${localStorage.getItem(
-          "searched"
-        )},${searchWord}`.split(",");
-        let newStorageSet = newStorage.filter((item, index) => {
-          return newStorage.indexOf(item) === index;
-        });
-        localStorage.setItem("searched", `${newStorageSet}`);
-        setlocalStorageData(newStorageSet);
-      }
-      setSearchWord("");
-    }
-  };
-
-  // search requset optimizaition
-  const [keyInUse, setKeyInUse] = useState(false);
-  const keyCheck = (e: KeyEvent, type: string) => {
-    if (type === "up") {
-      if (e.code.indexOf("Key") === 0) {
-        setTimeout(() => {
-          setKeyInUse(false);
-        }, 500);
-      }
-    } else if (type === "down") {
-      setKeyInUse(true);
-    }
-    // tabIndex ArrowKey contral start
-    if (e.key === "ArrowDown" && !e.nativeEvent.isComposing) {
-      document.getElementById("searchList0")?.focus();
-    }
-  };
+  const { keyInUse, keyCheck } = useDebounce();
+  const {
+    isFocus,
+    searchWord,
+    localStorageData,
+    setlocalStorageData,
+    setSearchWord,
+    focusHandler,
+    focusOn,
+    onSubmit,
+  } = useSearch();
 
   return (
     <SearchBox onClick={() => focusHandler("blur")}>
